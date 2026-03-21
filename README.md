@@ -1,4 +1,4 @@
-# From Detection to Association: Learning Discriminative Object Embeddings for Multi-Object Tracking
+# [CVPR 2026]From Detection to Association: Learning Discriminative Object Embeddings for Multi-Object Tracking
 
 [![Arxiv](https://img.shields.io/badge/ArXiv-2512.02392-B31B1B.svg)](https://arxiv.org/abs/2512.02392)
 [![HuggingFace](https://img.shields.io/badge/🤗%20HuggingFace-FDTA-yellow)](https://huggingface.co/Spongebobbbbbbbb/FDTA)
@@ -22,8 +22,6 @@ pip install -r requirements.txt
 # Compile the Deformable Attention operator:
 cd models/ops/
 sh make.sh
-# [Optional] Test the compiled operator:
-python test.py
 ```
 
 ### 2. Data Preparation
