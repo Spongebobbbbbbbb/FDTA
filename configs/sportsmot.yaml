@@ -1,0 +1,21 @@
+SUPER_CONFIG_PATH: configs/dancetrack.yaml
+
+DATASETS: [SportsMOT]
+DATASET_SPLITS: [train]
+INFERENCE_DATASET: SportsMOT
+INFERENCE_SPLIT: val
+
+SAMPLE_LENGTHS: [60, ]
+
+DETR_PRETRAIN: ./pretrains/r50_deformable_detr_coco_sportsmot.pth
+
+REL_PE_LENGTH: 60
+
+DEPTH_FG_WEIGHT: 7
+
+EPOCHS: 13
+SCHEDULER_MILESTONES: [8, 12, ]
+
+MISS_TOLERANCE: 60          # tolerance for missing frames
+
+USE_DECODER_CHECKPOINT: True

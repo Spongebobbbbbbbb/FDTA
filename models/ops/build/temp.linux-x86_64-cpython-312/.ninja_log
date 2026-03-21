@@ -1,0 +1,4 @@
+# ninja log v5
+3	18444	1748425318167745973	/cpfs04/shared/sport/shaoyuqing/MOTIP/models/ops/build/temp.linux-x86_64-cpython-312/cpfs04/shared/sport/shaoyuqing/MOTIP/models/ops/src/cpu/ms_deform_attn_cpu.o	32ee581c780e6857
+3	34086	1748425333812516955	/cpfs04/shared/sport/shaoyuqing/MOTIP/models/ops/build/temp.linux-x86_64-cpython-312/cpfs04/shared/sport/shaoyuqing/MOTIP/models/ops/src/vision.o	e3658b2144be8165
+3	40618	1748425340327866866	/cpfs04/shared/sport/shaoyuqing/MOTIP/models/ops/build/temp.linux-x86_64-cpython-312/cpfs04/shared/sport/shaoyuqing/MOTIP/models/ops/src/cuda/ms_deform_attn_cuda.o	2e721229c762112b

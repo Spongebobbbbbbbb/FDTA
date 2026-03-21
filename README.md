@@ -1,6 +1,7 @@
 # From Detection to Association: Learning Discriminative Object Embeddings for Multi-Object Tracking
 
 [![Arxiv](https://img.shields.io/badge/ArXiv-2512.02392-B31B1B.svg)](https://arxiv.org/abs/2512.02392)
+[![HuggingFace](https://img.shields.io/badge/🤗%20HuggingFace-FDTA-yellow)](https://huggingface.co/Spongebobbbbbbbb/FDTA)
 
 
 > **TL;DR.** We reveal that DETR-based end-to-end MOT suffers from overly similar object embeddings. FDTA explicitly enhances discriminativeness in this paradigm.
@@ -8,7 +9,120 @@
 ![Teaser](./assets/teaser.png)
 
 ## 📢 News
-* **[Coming Soon]** The code and dataset are being organized and will be released shortly. Please star this repo for updates!
+* **[2026]** Our paper has been accepted by **CVPR 2026**! The code is now released. Please star this repo for updates!
+
+## 🚀 Getting Started
+
+### 1. Environment Setup
+
+```shell
+conda create -n FDTA python=3.12
+conda activate FDTA
+pip install -r requirements.txt
+# Compile the Deformable Attention operator:
+cd models/ops/
+sh make.sh
+# [Optional] Test the compiled operator:
+python test.py
+```
+
+### 2. Data Preparation
+
+Please organize your datasets under `./datasets/` in the following structure. Note that **depth maps are required** alongside the RGB images:
+
+```
+datasets/
+├── DanceTrack/
+│   ├── train/
+│   │   └── <sequence>/
+│   │       ├── img1/
+│   │       ├── gt/
+│   │       └── depth/
+│   ├── val/
+│   └── test/
+├── SportsMOT/
+│   ├── train/
+│   │   └── <sequence>/
+│   │       ├── img1/
+│   │       ├── gt/
+│   │       └── depth/
+│   ├── val/
+│   └── test/
+└── BFT/
+    ├── train/
+    │   └── <sequence>/
+    │       ├── img1/
+    │       ├── gt/
+    │       └── depth/
+    └── test/
+```
+
+> **Dataset sources:**
+> - **DanceTrack**: Download from the [official repository](https://github.com/DanceTrack/DanceTrack).
+> - **SportsMOT**: Download from the [official repository](https://github.com/MCG-NJU/SportsMOT) or [HuggingFace](https://huggingface.co/datasets/MCG-NJU/SportsMOT).
+> - **BFT**: Download from [Google Drive](https://drive.google.com/drive/folders/140mPnOVZY-2apH76at9yYuVGIDWOvsH_?usp=sharing) or [Baidu Pan](https://pan.baidu.com/s/1Ztu8-JJLFHmMkJyWrJQ8lQ?pwd=bft5) ([NetTrack](https://github.com/george-zhuang/nettrack)).
+> - **Depth maps**: Generated using [Video-Depth-Anything](https://github.com/DepthAnything/Video-Depth-Anything) (see `tools/gen_depthmaps.py`). Other depth estimators with the same directory structure are also supported.
+
+### 3. Pre-trained Weights
+
+We use COCO pre-trained Deformable DETR weights for initialization, sourced from [MOTIP](https://github.com/MCG-NJU/MOTIP). Download the weights and place them under `./pretrains/`:
+
+| File | Description | Download |
+|------|-------------|----------|
+| `r50_deformable_detr_coco.pth` | COCO pre-trained (base) | [link](https://github.com/MCG-NJU/MOTIP/releases/download/v0.1/r50_deformable_detr_coco.pth) |
+| `r50_deformable_detr_coco_dancetrack.pth` | Fine-tuned on DanceTrack | [link](https://github.com/MCG-NJU/MOTIP/releases/download/v0.1/r50_deformable_detr_coco_dancetrack.pth) |
+| `r50_deformable_detr_coco_sportsmot.pth` | Fine-tuned on SportsMOT | [link](https://github.com/MCG-NJU/MOTIP/releases/download/v0.1/r50_deformable_detr_coco_sportsmot.pth) |
+| `r50_deformable_detr_coco_bft.pth` | Fine-tuned on BFT | [link](https://github.com/MCG-NJU/MOTIP/releases/download/v0.1/r50_deformable_detr_coco_bft.pth) |
+
+Our trained FDTA model weights are available on [HuggingFace](https://huggingface.co/Spongebobbbbbbbb/FDTA). Download and place them under `./checkpoints/` for inference.
+
+
+### 4. Training
+
+All training configurations are stored in the `./configs/` folder. For example, to train on **DanceTrack**:
+
+```shell
+accelerate launch --num_processes=4 train.py \
+  --data-root /path/to/your/datasets/ \
+  --exp-name fdta_dancetrack \
+  --config-path ./configs/dancetrack.yaml \
+  --detr-pretrain ./pretrains/r50_deformable_detr_coco_dancetrack.pth
+```
+
+Replace `dancetrack` with `sportsmot` or `bft` to train on other datasets.
+
+> **Note:** If your GPU memory is less than 24GB, you can set `--detr-num-checkpoint-frames 2` (< 16GB) or `--detr-num-checkpoint-frames 1` (< 12GB) to reduce memory usage.
+
+### 5. Inference
+
+We support two inference modes:
+
+- **`submit`**: Generate tracker files for submission .
+- **`evaluate`**: Generate tracker files and compute evaluation metrics.
+
+```shell
+accelerate launch --num_processes=4 submit_and_evaluate.py \
+  --data-root /path/to/your/datasets/ \
+  --inference-mode evaluate \
+  --config-path ./configs/dancetrack.yaml \
+  --inference-model ./checkpoints/dancetrack.pth \
+  --outputs-dir ./outputs/ \
+  --inference-dataset DanceTrack \
+  --inference-split val
+
+accelerate launch --num_processes=4 submit_and_evaluate.py \
+  --data-root /path/to/your/datasets/ \
+  --inference-mode submit \
+  --config-path ./configs/dancetrack.yaml \
+  --inference-model ./checkpoints/dancetrack.pth \
+  --outputs-dir ./outputs/ \
+  --inference-dataset DanceTrack \
+  --inference-split test
+```
+
+> You can add `--inference-dtype FP16` for faster inference with minimal performance loss.
+
+---
 
 ## Main Results
 

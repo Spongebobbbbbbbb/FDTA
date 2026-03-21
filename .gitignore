@@ -1,0 +1,16 @@
+__pycache__
+build/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+*.pth
+outputs/
+checkpoints/
+pretrains/
+datasets/
+.idea/
+.vscode/
+*.log
+tensorboard/
+wandb/
